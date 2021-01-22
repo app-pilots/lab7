@@ -33,16 +33,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Registros extends AppCompatActivity {
-    public BarChart graficoBarras; private RequestQueue
+    public BarChart graficoBarras;
+    private RequestQueue
             ListaRequest = null;
     private String token = "eyJ0eXAi………………………-mMIArvMc";
-//Generar un token propio
+    //Generar un token propio
     private LinearLayout
-    contenedorTemperaturas; private Map<String, TextView>
-            temperaturasTVs; private Map<String, TextView> fechasTVs;
+            contenedorTemperaturas;
+    private Map<String, TextView>
+            temperaturasTVs;
+    private Map<String, TextView> fechasTVs;
     private Registros contexto;
-
-
 
 
     @Override
@@ -51,14 +52,15 @@ public class Registros extends AppCompatActivity {
         setContentView(R.layout.activity_registros);
 
         setTitle("Grafico de barras");
-        temperaturasTVs = new HashMap<String,TextView>();
-        fechasTVs = new HashMap<String,TextView>();
-        ListaRequest = Volley.newRequestQueue(this); contexto
+        temperaturasTVs = new HashMap<String, TextView>();
+        fechasTVs = new HashMap<String, TextView>();
+        ListaRequest = Volley.newRequestQueue(this);
+        contexto
                 = this;
         /* GRAFICO */
         this.iniciarGrafico();
         this.solicitarTemperaturas();
-}
+    }
 
     public void iniciarGrafico() {
         graficoBarras = findViewById(R.id.barChart);
@@ -75,10 +77,10 @@ public class Registros extends AppCompatActivity {
         graficoBarras.getLegend().setEnabled(false);
     }
 
-    public void solicitarTemperaturas(){
+    public void solicitarTemperaturas() {
         String url_registros = "https://amstdb.herokuapp.com/db/logTres";
         JsonArrayRequest requestRegistros =
-                new JsonArrayRequest( Request.Method.GET,
+                new JsonArrayRequest(Request.Method.GET,
                         url_registros, null,
                         new Response.Listener<JSONArray>() {
                             @Override
@@ -92,18 +94,19 @@ public class Registros extends AppCompatActivity {
                         System.out.println("error");
                     }
                 }
-                ){ @Override
-                public Map<String, String> getHeaders() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("Authorization", "JWT " + token);
-                    return params;
-                }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Authorization", "JWT " + token);
+                        return params;
+                    }
                 };
         ListaRequest.add(requestRegistros);
 
     }
 
-    private void mostrarTemperaturas(JSONArray temperaturas){
+    private void mostrarTemperaturas(JSONArray temperaturas) {
         String registroId;
         JSONObject registroTemp;
         LinearLayout nuevoRegistro;
@@ -113,13 +116,12 @@ public class Registros extends AppCompatActivity {
         LinearLayout.LayoutParams parametrosLayout = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1);
-        try
-        {
+        try {
             for (int i = 0; i < temperaturas.length(); i++) {
                 registroTemp = (JSONObject) temperaturas.get(i);
                 registroId = registroTemp.getString("id");
-                if( registroTemp.getString("key").equals("temperatura")){
-                    if( temperaturasTVs.containsKey(registroId) && fechasTVs.containsKey(registroId) ){
+                if (registroTemp.getString("key").equals("temperatura")) {
+                    if (temperaturasTVs.containsKey(registroId) && fechasTVs.containsKey(registroId)) {
                         fechaRegistro = fechasTVs.get(registroId);
                         valorRegistro = temperaturasTVs.get(registroId);
                         fechaRegistro.setText(registroTemp.getString("date_created"));
@@ -139,8 +141,8 @@ public class Registros extends AppCompatActivity {
                         fechasTVs.put(registroId, fechaRegistro);
                         temperaturasTVs.put(registroId, valorRegistro);
                     }
+                } else {
                 }
-                else{ }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -149,18 +151,19 @@ public class Registros extends AppCompatActivity {
 
     }
 
-    private void actualizarGrafico(JSONArray temperaturas){
+    private void actualizarGrafico(JSONArray temperaturas) {
         JSONObject registro_temp;
         String temp;
-        String date; int
-                count = 0; float
+        String date;
+        int
+                count = 0;
+        float
                 temp_val;
         ArrayList<BarEntry> dato_temp = new ArrayList<>();
-        try
-        {
+        try {
             for (int i = 0; i < temperaturas.length(); i++) {
                 registro_temp = (JSONObject) temperaturas.get(i);
-                if( registro_temp.getString("key").equals("temperatura")){
+                if (registro_temp.getString("key").equals("temperatura")) {
                     temp = registro_temp.getString("value");
                     date = registro_temp.getString("date_created");
                     temp_val = Float.parseFloat(temp);
@@ -172,14 +175,15 @@ public class Registros extends AppCompatActivity {
             e.printStackTrace();
             System.out.println("error");
         }
-        System.out.println(dato_temp); llenarGrafico(dato_temp);
+        System.out.println(dato_temp);
+        llenarGrafico(dato_temp);
 
 
     }
 
-    private void llenarGrafico(ArrayList<BarEntry> dato_temp){
+    private void llenarGrafico(ArrayList<BarEntry> dato_temp) {
         BarDataSet temperaturasDataSet;
-        if ( graficoBarras.getData() != null &&
+        if (graficoBarras.getData() != null &&
                 graficoBarras.getData().getDataSetCount() > 0) {
             temperaturasDataSet = (BarDataSet)
                     graficoBarras.getData().getDataSetByIndex(0);
@@ -193,7 +197,8 @@ public class Registros extends AppCompatActivity {
             ArrayList<IBarDataSet> dataSets = new ArrayList<>();
             dataSets.add(temperaturasDataSet);
             BarData data = new BarData(dataSets);
-            graficoBarras.setData(data); graficoBarras.setFitBars(true);
+            graficoBarras.setData(data);
+            graficoBarras.setFitBars(true);
         }
         graficoBarras.invalidate();
         final Handler handler = new Handler();
@@ -206,5 +211,5 @@ public class Registros extends AppCompatActivity {
         handler.postDelayed(runnable, 3000);
 
     }
-    
+
 }

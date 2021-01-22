@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
+
     public void abrirVistaRegistros(View view) {
         Intent intent = new Intent(this, Registros.class);
         startActivity(intent);
